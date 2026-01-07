@@ -3,13 +3,13 @@ import React from 'react'
 import config from '@payload-config'
 import { formatDate } from '@/app/helpers/formatDate'
 
-type PageProps = {
-  params: {
+type PropetyPageProps = {
+  params: Promise<{
     id: string
-  }
+  }>
 }
-const PropertyDetails = async ({ params }: PageProps) => {
-  const id = params.id
+const PropertyDetails = async ({ params }: PropetyPageProps) => {
+  const { id } = await params
 
   const payload = await getPayload({ config })
 
