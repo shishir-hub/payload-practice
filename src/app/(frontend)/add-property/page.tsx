@@ -40,6 +40,8 @@ const AddProperty = () => {
   useEffect(() => {
     if (!user?.id) {
       router.push('/login')
+    } else if (user?.role !== 'admin' && user?.role !== 'seller') {
+      router.push('/')
     }
   }, [])
 

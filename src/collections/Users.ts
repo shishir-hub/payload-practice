@@ -41,6 +41,7 @@ export const Users: CollectionConfig = {
     {
       name: 'role',
       type: 'select',
+      defaultValue: 'buyer',
       saveToJWT: true,
       hooks: {
         beforeChange: [protectRoleHook],
