@@ -54,6 +54,7 @@ const Login = () => {
       <Box maw={340} w={'100%'}>
         <form onSubmit={form.onSubmit((values) => handleLogin(values))}>
           <TextInput
+            mt="md"
             label="Email"
             placeholder="example@email.com"
             key={form.key('email')}
@@ -61,6 +62,7 @@ const Login = () => {
           />
 
           <PasswordInput
+            mt="md"
             label="Password"
             key={form.key('password')}
             {...form.getInputProps('password')}

@@ -9,6 +9,8 @@ import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps } fro
 import Navbar from '@/components/frontend/Navbar/Navbar'
 import Footer from '@/components/frontend/Footer/Footer'
 import StoreProvider from '@/store/StoreProvider'
+import { cookies } from 'next/headers'
+import { getUser } from '../helpers/auth'
 
 export const metadata = {
   description: 'A blank template using Payload in a Next.js app.',
@@ -36,6 +38,11 @@ const theme = createTheme({
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
+
+  const cookiesStore = await cookies()
+
+  const token = cookiesStore.get('payload-token')?.value
+  const user = await getUser()
 
   return (
     <html lang="en" {...mantineHtmlProps}>

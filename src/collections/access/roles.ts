@@ -11,6 +11,14 @@ export const adminSeller: Access = ({ req: { user } }) => {
   return false
 }
 
+export const adminBuyer: Access = ({ req: { user } }) => {
+  if (checkRole('admin', user) || checkRole('buyer', user)) {
+    return true
+  }
+
+  return false
+}
+
 export const anyone: Access = ({ req: { user } }) => true
 
 export const sellers: Access = ({ req: { user } }) => checkRole('seller', user)

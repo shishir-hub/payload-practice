@@ -14,7 +14,7 @@ const PropertyCard = ({data}) => {
       </Text>
 
       <Button component={Link} href={`/property/${data.id}`} color="blue" fullWidth mt="md" radius="md">
-        Book 
+        View Details 
       </Button>
     </Card>
   );

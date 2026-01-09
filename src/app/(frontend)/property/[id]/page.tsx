@@ -26,6 +26,8 @@ const PropertyDetails = async ({ params }: PropetyPageProps) => {
     )
   }
 
+  const seller = { ...Object(propertyDetail.seller) }
+
   return (
     <div className="standard-page">
       <h1>Property Details</h1>
@@ -37,7 +39,7 @@ const PropertyDetails = async ({ params }: PropetyPageProps) => {
         <div className="creation-block">
           <p className="posted-at">Posted at: {formatDate(propertyDetail.updatedAt)}</p>
 
-          <p className="user">Owner: {}</p>
+          <p className="user">Owner: {seller?.name ?? seller?.email}</p>
         </div>
       </div>
     </div>

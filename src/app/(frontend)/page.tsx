@@ -6,14 +6,14 @@ import config from '@payload-config'
 import PropertyCard from '@/components/frontend/PropertyCard'
 
 export default async function HomePage() {
-  try {
-    const payload = await getPayload({ config })
+  const payload = await getPayload({ config })
 
-    const properties = await payload.find({
-      collection: 'properties',
-    })
+  const properties = await payload.find({
+    collection: 'properties',
+  })
 
-    return (
+  return (
+    <>
       <div className="home">
         <div className="content">
           <h1>Properties List</h1>
@@ -25,17 +25,6 @@ export default async function HomePage() {
           </div>
         </div>
       </div>
-    )
-  } catch (error) {
-    console.error('Failed to load properties:', error)
-
-    return (
-      <div className="home">
-        <div className="content">
-          <h1>Something went wrong</h1>
-          <p>Please try again later.</p>
-        </div>
-      </div>
-    )
-  }
+    </>
+  )
 }

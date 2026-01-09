@@ -21,10 +21,15 @@ const protectRoleHook: FieldHook = ({ value, req, originalDoc }) => {
   return value
 }
 
+const getUserTitle: FieldHook = ({ siblingData }) => {
+  return `${siblingData?.name ?? ''} ${siblingData?.phoneNumber ?? ''} ${siblingData?.email ?? ''}`
+}
+
 export const Users: CollectionConfig = {
   slug: 'users',
   admin: {
-    useAsTitle: 'email',
+    useAsTitle: 'name',
+    defaultColumns: ['name', 'email', 'phoneNumber', 'role', 'updatedAt'],
   },
   access: {
     read: admins,
@@ -40,26 +45,104 @@ export const Users: CollectionConfig = {
   fields: [
     {
       name: 'role',
-      type: 'select',
+      type: 'text',
       defaultValue: 'buyer',
       saveToJWT: true,
       hooks: {
         beforeChange: [protectRoleHook],
       },
-      options: [
-        {
-          label: 'Admin',
-          value: 'admin',
+      admin: {
+        components: {
+          Field: {
+            path: '@/components/admin/SelectCustomField',
+            clientProps: {
+              options: [
+                {
+                  label: 'Admin',
+                  value: 'admin',
+                },
+                {
+                  label: 'Seller',
+                  value: 'seller',
+                },
+                {
+                  label: 'Buyer',
+                  value: 'buyer',
+                },
+              ],
+              required: true,
+            },
+          },
         },
-        {
-          label: 'Seller',
-          value: 'seller',
-        },
-        {
-          label: 'Buyer',
-          value: 'buyer',
-        },
-      ],
+      },
     },
+    {
+      name: 'name',
+      type: 'text',
+      required: true,
+      validate: (value: string | null | undefined) => {
+        if (!value || value.length < 1) return 'User Name is required.'
+        return true
+      },
+      admin: {
+        components: {
+          Field: {
+            path: '@/components/admin/TextInputField',
+            clientProps: {
+              label: 'Name',
+              required: true,
+            },
+          },
+        },
+      },
+    },
+    {
+      name: 'phoneNumber',
+      type: 'text',
+      required: true,
+      validate: (value: string | null | undefined) => {
+        if (!value || value.length < 1) return 'Phone Number is required.'
+        if (value.length !== 10) return 'Phone Number must be of 10 digits.'
+        if (!/^\d{10}/.test(value)) return 'Phone number field can only contain digits 0-9.'
+        return true
+      },
+      admin: {
+        components: {
+          Field: {
+            path: '@/components/admin/TextInputField',
+            clientProps: {
+              label: 'Phone Number',
+              required: true,
+            },
+          },
+        },
+      },
+    },
+    // {
+    //   name: 'title',
+    //   type: 'text',
+    //   virtual: 'true',
+    //   hooks: {
+    //     afterRead: [getUserTitle],
+    //   },
+    //   admin: {
+    //     hidden: true,
+    //   },
+    // },
+    // {
+    //   name: 'testField',
+    //   type: 'text',
+    //   virtual: 'true',
+    //   admin: {
+    //     components: {
+    //       Field: {
+    //         path: '@/components/admin/TextInputField',
+    //         clientProps: {
+    //           label: 'Test Field',
+    //         },
+    //       },
+    //     },
+    //   },
+    // },
   ],
 }
