@@ -75,6 +75,16 @@ export const Properties: CollectionConfig = {
       type: 'relationship',
       relationTo: 'users',
       required: true,
+      admin: {
+        components: {
+          Field: {
+            path: '@/components/admin/SellerSelectField',
+            clientProps: {
+              required: true,
+            },
+          },
+        },
+      },
     },
     {
       name: 'city',

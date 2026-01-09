@@ -3,17 +3,15 @@
 import React, { useState } from 'react'
 
 import { useForm } from '@mantine/form'
-import { Box, Button, Group, PasswordInput, Select, TextInput } from '@mantine/core'
+import { Box, Button, Group, InputBase, PasswordInput, Select, TextInput } from '@mantine/core'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import { addUser } from '@/store/slice/userSlice'
-import { useAppDispatch } from '@/store/store'
+import { IMaskInput } from 'react-imask'
 
 const Signup = () => {
-  const dispatch = useAppDispatch()
-
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -27,7 +25,10 @@ const Signup = () => {
 
     validate: {
       name: (value) => (value.length > 0 ? null : 'Full name required'),
-      phoneNumber: (value) => (/^\d{10}$/.test(value) ? null : 'Invalid Phone Number'),
+      phoneNumber: (value) =>
+        /^\(\d{3}\) \d{3}-\d{4}$/.test(value)
+          ? null
+          : 'Phone Number should be in (000) 000-000 format.',
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
       password: (value) => (value.length > 8 ? null : 'Password must be atleast 8 characters long'),
       confirmPassword: (value, values) =>
@@ -61,9 +62,12 @@ const Signup = () => {
             key={form.key('name')}
             {...form.getInputProps('name')}
           />
-          <TextInput
+          <InputBase
             label="Phone Number"
-            placeholder="9847******"
+            placeholder="(XXX) XXX-XXXX"
+            component={IMaskInput}
+            mask="(000) 000-0000"
+            overwrite
             key={form.key('phoneNumber')}
             {...form.getInputProps('phoneNumber')}
           />

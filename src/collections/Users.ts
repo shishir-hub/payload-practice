@@ -44,105 +44,87 @@ export const Users: CollectionConfig = {
   },
   fields: [
     {
-      name: 'role',
-      type: 'text',
-      defaultValue: 'buyer',
-      saveToJWT: true,
-      hooks: {
-        beforeChange: [protectRoleHook],
-      },
-      admin: {
-        components: {
-          Field: {
-            path: '@/components/admin/SelectCustomField',
-            clientProps: {
-              options: [
-                {
-                  label: 'Admin',
-                  value: 'admin',
+      type: 'row',
+      fields: [
+        {
+          name: 'role',
+          type: 'text',
+          defaultValue: 'buyer',
+          saveToJWT: true,
+          hooks: {
+            beforeChange: [protectRoleHook],
+          },
+          admin: {
+            width: '33.33%',
+            components: {
+              Field: {
+                path: '@/components/admin/SelectCustomField',
+                clientProps: {
+                  options: [
+                    {
+                      label: 'Admin',
+                      value: 'admin',
+                    },
+                    {
+                      label: 'Seller',
+                      value: 'seller',
+                    },
+                    {
+                      label: 'Buyer',
+                      value: 'buyer',
+                    },
+                  ],
+                  required: true,
                 },
-                {
-                  label: 'Seller',
-                  value: 'seller',
-                },
-                {
-                  label: 'Buyer',
-                  value: 'buyer',
-                },
-              ],
-              required: true,
+              },
             },
           },
         },
-      },
-    },
-    {
-      name: 'name',
-      type: 'text',
-      required: true,
-      validate: (value: string | null | undefined) => {
-        if (!value || value.length < 1) return 'User Name is required.'
-        return true
-      },
-      admin: {
-        components: {
-          Field: {
-            path: '@/components/admin/TextInputField',
-            clientProps: {
-              label: 'Name',
-              required: true,
+        {
+          name: 'name',
+          type: 'text',
+          required: true,
+          validate: (value: string | null | undefined) => {
+            if (!value || value.length < 1) return 'User Name is required.'
+            return true
+          },
+          admin: {
+            width: '33.33%',
+            components: {
+              Field: {
+                path: '@/components/admin/TextInputField',
+                clientProps: {
+                  label: 'Name',
+                  required: true,
+                },
+              },
             },
           },
         },
-      },
-    },
-    {
-      name: 'phoneNumber',
-      type: 'text',
-      required: true,
-      validate: (value: string | null | undefined) => {
-        if (!value || value.length < 1) return 'Phone Number is required.'
-        if (value.length !== 10) return 'Phone Number must be of 10 digits.'
-        if (!/^\d{10}/.test(value)) return 'Phone number field can only contain digits 0-9.'
-        return true
-      },
-      admin: {
-        components: {
-          Field: {
-            path: '@/components/admin/TextInputField',
-            clientProps: {
-              label: 'Phone Number',
-              required: true,
+        {
+          name: 'phoneNumber',
+          type: 'text',
+          required: true,
+          validate: (value: string | null | undefined) => {
+            if (!value || value.length < 1) return 'Phone Number is required.'
+            if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(value))
+              return 'Phone Number should be in (000) 000-000 format.'
+            return true
+          },
+          admin: {
+            width: '33.33%',
+            components: {
+              Field: {
+                path: '@/components/admin/PhoneNumberField',
+                clientProps: {
+                  label: 'Phone Number',
+                  required: true,
+                },
+              },
             },
           },
         },
-      },
+      ],
     },
-    // {
-    //   name: 'title',
-    //   type: 'text',
-    //   virtual: 'true',
-    //   hooks: {
-    //     afterRead: [getUserTitle],
-    //   },
-    //   admin: {
-    //     hidden: true,
-    //   },
-    // },
-    // {
-    //   name: 'testField',
-    //   type: 'text',
-    //   virtual: 'true',
-    //   admin: {
-    //     components: {
-    //       Field: {
-    //         path: '@/components/admin/TextInputField',
-    //         clientProps: {
-    //           label: 'Test Field',
-    //         },
-    //       },
-    //     },
-    //   },
-    // },
   ],
 }

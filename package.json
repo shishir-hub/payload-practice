@@ -37,6 +37,7 @@
     "@payloadcms/richtext-lexical": "3.70.0",
     "@payloadcms/ui": "3.70.0",
     "@reduxjs/toolkit": "^2.11.2",
+    "@tabler/icons-react": "^3.36.1",
     "@tiptap/extension-highlight": "^3.15.3",
     "@tiptap/extension-link": "^3.15.3",
     "@tiptap/extension-subscript": "^3.15.3",
@@ -56,6 +57,7 @@
     "payload": "^3.70.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "react-imask": "^7.6.1",
     "react-redux": "^9.2.0",
     "recharts": "^3.6.0",
     "sharp": "0.34.2"

@@ -1,19 +1,12 @@
 'use client'
 
-import {
-  ComboboxItem,
-  ComboboxLikeRenderOptionInput,
-  Flex,
-  Group,
-  Select,
-  SelectProps,
-} from '@mantine/core'
+import { ComboboxItem, ComboboxLikeRenderOptionInput, Flex, Select } from '@mantine/core'
 import { useField } from '@payloadcms/ui'
+import { IconCheck } from '@tabler/icons-react'
 import axios from 'axios'
 import type { Where } from 'payload'
 import { stringify } from 'qs-esm'
 import React, { useEffect, useState } from 'react'
-import { IconCheck } from '@tabler/icons-react'
 
 const iconProps = {
   stroke: 1.5,
@@ -27,7 +20,7 @@ type UserOption = ComboboxItem & {
   phoneNumber?: string
 }
 
-const BuyerSelectField = ({
+const SellerSelectField = ({
   path,
   label,
   required,
@@ -42,7 +35,7 @@ const BuyerSelectField = ({
     label ?? path.replace(/([A-Z])/g, ' $1').replace(/^./, (char) => char.toUpperCase())
 
   const [loading, setLoading] = useState(false)
-  const [options, setOptions] = useState<UserOption[] | string[]>([])
+  const [options, setOptions] = useState<{ label: string; value: string }[] | string[]>([])
 
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
@@ -64,7 +57,7 @@ const BuyerSelectField = ({
       and: [
         {
           role: {
-            equals: 'buyer',
+            equals: 'seller',
           },
         },
         {
@@ -165,4 +158,4 @@ const BuyerSelectField = ({
   )
 }
 
-export default BuyerSelectField
+export default SellerSelectField
