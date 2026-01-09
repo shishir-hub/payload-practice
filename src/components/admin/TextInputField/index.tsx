@@ -8,10 +8,12 @@ const TextInputField = ({
   path,
   label,
   required,
+  width,
 }: {
   path: string
   label?: string
   required?: boolean | false
+  width?: string | '100%'
 }) => {
   const { value, setValue, showError, errorMessage } = useField<string>()
 
@@ -26,6 +28,7 @@ const TextInputField = ({
       required={required}
       error={showError ? errorMessage : undefined}
       my={20}
+      w={width}
     />
   )
 }

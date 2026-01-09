@@ -15,11 +15,13 @@ const SelectCustomField = ({
   label,
   required,
   options,
+  width,
 }: {
   path: string
   label?: string | null
   required?: boolean | false
   options: string[] | OptionsProps[]
+  width?: string | '100%'
 }) => {
   const { value, setValue, showError, errorMessage } = useField<string>()
 
@@ -36,6 +38,8 @@ const SelectCustomField = ({
       required={required}
       my={20}
       maxDropdownHeight={200}
+      w={width}
+      allowDeselect={!required}
     />
   )
 }

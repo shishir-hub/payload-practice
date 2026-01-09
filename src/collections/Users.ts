@@ -1,6 +1,6 @@
 import type {
   CollectionAfterLoginHook,
-  CollectionAfterReadHook,
+  CollectionBeforeChangeHook,
   CollectionConfig,
   FieldHook,
 } from 'payload'
@@ -21,8 +21,24 @@ const protectRoleHook: FieldHook = ({ value, req, originalDoc }) => {
   return value
 }
 
-const getUserTitle: FieldHook = ({ siblingData }) => {
-  return `${siblingData?.name ?? ''} ${siblingData?.phoneNumber ?? ''} ${siblingData?.email ?? ''}`
+const cleanupNumberAndEmail: CollectionBeforeChangeHook = ({ data }) => {
+  data.email = `${data.email}`.toLowerCase()
+  data.phoneNumber = `${data.phoneNumber}`
+    .trim()
+    .replace('(', '')
+    .replace(' ', '')
+    .replace(')', '')
+    .replace('-', '')
+
+  return data
+}
+
+const formatPhoneNumber: FieldHook = ({ value }) => {
+  if (!value.includes('(') && value.length === 10) {
+    return `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`
+  }
+
+  return value
 }
 
 export const Users: CollectionConfig = {
@@ -41,6 +57,7 @@ export const Users: CollectionConfig = {
   auth: true,
   hooks: {
     afterLogin: [setCookieToken],
+    beforeChange: [cleanupNumberAndEmail],
   },
   fields: [
     {
@@ -55,7 +72,6 @@ export const Users: CollectionConfig = {
             beforeChange: [protectRoleHook],
           },
           admin: {
-            width: '33.33%',
             components: {
               Field: {
                 path: '@/components/admin/SelectCustomField',
@@ -75,6 +91,7 @@ export const Users: CollectionConfig = {
                     },
                   ],
                   required: true,
+                  width: '32.33%',
                 },
               },
             },
@@ -89,13 +106,13 @@ export const Users: CollectionConfig = {
             return true
           },
           admin: {
-            width: '33.33%',
             components: {
               Field: {
                 path: '@/components/admin/TextInputField',
                 clientProps: {
                   label: 'Name',
                   required: true,
+                  width: '32.33%',
                 },
               },
             },
@@ -107,18 +124,27 @@ export const Users: CollectionConfig = {
           required: true,
           validate: (value: string | null | undefined) => {
             if (!value || value.length < 1) return 'Phone Number is required.'
-            if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(value))
-              return 'Phone Number should be in (000) 000-000 format.'
+            const cleanNumber = value
+              .trim()
+              .replace('(', '')
+              .replace(' ', '')
+              .replace(')', '')
+              .replace('-', '')
+
+            if (cleanNumber.length != 10) return 'Phone Number must be of 10 digit.'
             return true
           },
+          hooks: {
+            afterRead: [formatPhoneNumber],
+          },
           admin: {
-            width: '33.33%',
             components: {
               Field: {
                 path: '@/components/admin/PhoneNumberField',
                 clientProps: {
                   label: 'Phone Number',
                   required: true,
+                  width: '32.33%',
                 },
               },
             },

@@ -7,10 +7,13 @@ import { Box, Button, Group, InputBase, PasswordInput, Select, TextInput } from 
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { IMaskInput } from 'react-imask'
+import { useAppDispatch } from '@/store/store'
+import { setAlert } from '@/store/slice/alertSlice'
 
 const Signup = () => {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const dispatch = useAppDispatch()
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -25,10 +28,17 @@ const Signup = () => {
 
     validate: {
       name: (value) => (value.length > 0 ? null : 'Full name required'),
-      phoneNumber: (value) =>
-        /^\(\d{3}\) \d{3}-\d{4}$/.test(value)
-          ? null
-          : 'Phone Number should be in (000) 000-000 format.',
+      phoneNumber: (value) => {
+        if (!value || value.length < 1) return 'Phone Number is required.'
+
+        if (
+          value.trim().replace('(', '').replace(' ', '').replace(')', '').replace('-', '').length !=
+          10
+        ) {
+          return 'Phone Number must be of 10 digit.'
+        }
+        return null
+      },
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
       password: (value) => (value.length > 8 ? null : 'Password must be atleast 8 characters long'),
       confirmPassword: (value, values) =>
@@ -36,15 +46,46 @@ const Signup = () => {
     },
   })
 
-  const handleSignup = (values: { email: string; password: string; role: string }) => {
+  const handleSignup = (values: {
+    email: string
+    password: string
+    role: string
+    name: string
+    phoneNumber: string
+  }) => {
     setLoading(true)
     axios
       .post(`/api/users`, values)
       .then((res) => {
         router.push('/login')
+        dispatch(setAlert({ show: true, message: 'Signup Success', type: 'success' }))
       })
       .catch((err) => {
-        console.log('Error')
+        const errorResponse = err?.response?.data
+        if (errorResponse.errors?.length && errorResponse?.errors[0]?.message) {
+          if (
+            errorResponse?.errors[0]?.data?.errors?.length &&
+            errorResponse?.errors[0]?.data?.errors[0]?.message
+          ) {
+            dispatch(
+              setAlert({
+                show: true,
+                message: errorResponse?.errors[0]?.data?.errors[0]?.message,
+                type: 'error',
+              }),
+            )
+          } else {
+            dispatch(
+              setAlert({
+                show: true,
+                message: errorResponse?.errors[0]?.message,
+                type: 'error',
+              }),
+            )
+          }
+        } else {
+          dispatch(setAlert({ show: true, message: 'Signup Failed', type: 'error' }))
+        }
       })
       .finally(() => {
         setLoading(false)
@@ -67,9 +108,9 @@ const Signup = () => {
             placeholder="(XXX) XXX-XXXX"
             component={IMaskInput}
             mask="(000) 000-0000"
-            overwrite
-            key={form.key('phoneNumber')}
             {...form.getInputProps('phoneNumber')}
+            value={form.getValues().phoneNumber}
+            onAccept={(value) => form.setFieldValue('phoneNumber', value)}
           />
           <TextInput
             label="Email"

@@ -1,5 +1,6 @@
 'use client'
 
+import { setAlert } from '@/store/slice/alertSlice'
 import { addUser } from '@/store/slice/userSlice'
 import { useAppDispatch, useAppSelector } from '@/store/store'
 import { Box, Button, Group, Textarea, TextInput } from '@mantine/core'
@@ -18,6 +19,8 @@ type Properties = {
 
 const AddProperty = () => {
   const router = useRouter()
+  const dispatch = useAppDispatch()
+
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -56,9 +59,36 @@ const AddProperty = () => {
       .post(`/api/properties`, data)
       .then((res) => {
         router.push('/')
+        dispatch(setAlert({ show: true, message: 'New Property Created.', type: 'success' }))
       })
       .catch((err) => {
-        console.log('Error: ', err)
+        const errorResponse = err?.response?.data
+        if (errorResponse.errors?.length && errorResponse?.errors[0]?.message) {
+          if (
+            errorResponse?.errors[0]?.data?.errors?.length &&
+            errorResponse?.errors[0]?.data?.errors[0]?.message
+          ) {
+            dispatch(
+              setAlert({
+                show: true,
+                message: errorResponse?.errors[0]?.data?.errors[0]?.message,
+                type: 'error',
+              }),
+            )
+          } else {
+            dispatch(
+              setAlert({
+                show: true,
+                message: errorResponse?.errors[0]?.message,
+                type: 'error',
+              }),
+            )
+          }
+        } else {
+          dispatch(
+            setAlert({ show: true, message: 'Property creation failed Failed', type: 'error' }),
+          )
+        }
       })
       .finally(() => {
         setLoading(false)

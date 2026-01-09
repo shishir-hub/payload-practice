@@ -77,7 +77,9 @@ const PropertySelectField = ({
       searchable
       searchValue={searchValue}
       nothingFoundMessage={
-        loading ? `Searching...` : `No ${formattedLabel} found for ${searchValue}`
+        loading
+          ? `Searching...`
+          : `No ${formattedLabel} found ${searchValue ? 'for' : ''} ${searchValue}`
       }
       onSearchChange={setSearchValue}
       label={formattedLabel}

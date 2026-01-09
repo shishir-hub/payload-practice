@@ -3,12 +3,13 @@
 import { useAppSelector } from '@/store/store'
 import { NavLink } from '@mantine/core'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import './Navbar.scss'
 
 const Navbar = () => {
   const { user }: { user: any } = useAppSelector((state) => state.userReducer.value)
+
   return (
     <div className="navbar">
       <div className="nav-container">
@@ -16,7 +17,7 @@ const Navbar = () => {
         <div className="nav-links">
           <NavLink component={Link} href="/" label="Home" />
           {user?.id ? (
-            user?.role === 'seller' ? (
+            user?.role === 'seller' || user?.role === 'admin' ? (
               <NavLink component={Link} href="/add-property" label="Add Property" />
             ) : (
               <></>

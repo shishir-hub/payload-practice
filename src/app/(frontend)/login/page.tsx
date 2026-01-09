@@ -8,6 +8,7 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { addUser } from '@/store/slice/userSlice'
 import { useAppDispatch } from '@/store/store'
+import { setAlert } from '@/store/slice/alertSlice'
 
 const Login = () => {
   const dispatch = useAppDispatch()
@@ -38,14 +39,49 @@ const Login = () => {
             exp: res.data.exp,
           }),
         )
+        dispatch(setAlert({ show: true, message: 'Login Success', type: 'success' }))
         router.push('/')
       })
       .catch((err) => {
-        console.log('Error')
+        const errorResponse = err?.response?.data
+        if (errorResponse.errors?.length && errorResponse?.errors[0]?.message) {
+          if (
+            errorResponse?.errors[0]?.data?.errors?.length &&
+            errorResponse?.errors[0]?.data?.errors?.message
+          ) {
+            dispatch(
+              setAlert({
+                show: true,
+                message: errorResponse?.errors[0]?.data?.errors?.message,
+                type: 'error',
+              }),
+            )
+          } else {
+            dispatch(
+              setAlert({
+                show: true,
+                message: errorResponse?.errors[0]?.message,
+                type: 'error',
+              }),
+            )
+          }
+        } else {
+          dispatch(setAlert({ show: true, message: 'Login Failed', type: 'error' }))
+        }
       })
       .finally(() => {
         setLoading(false)
       })
+  }
+
+  const [counter, setCounter] = useState(1)
+
+  const createAlert = () => {
+    console.log('clicked')
+
+    dispatch(setAlert({ show: true, message: `Login Success ${counter}`, type: 'success' }))
+
+    setCounter((pre) => pre + 1)
   }
   return (
     <div className="standard-page">
@@ -73,6 +109,12 @@ const Login = () => {
               Submit
             </Button>
           </Group>
+
+          {/* <Group justify="center" mt="md">
+            <Button type="button" onClick={createAlert} loading={loading} disabled={loading}>
+              Create Alert
+            </Button>
+          </Group> */}
         </form>
       </Box>
     </div>
