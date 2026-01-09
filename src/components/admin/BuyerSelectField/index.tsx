@@ -11,7 +11,7 @@ import {
 import { useField } from '@payloadcms/ui'
 import axios from 'axios'
 import type { Where } from 'payload'
-import { stringify } from 'qs-esm'
+import { stringify } from 'qs'
 import React, { useEffect, useState } from 'react'
 import { IconCheck } from '@tabler/icons-react'
 
